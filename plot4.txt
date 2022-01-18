@@ -1,0 +1,23 @@
+# Reading, naming and subsetting
+dat1 <- read.table("household_power_consumption.txt",skip=1,sep=";")
+names(dat1) <- c("Date","Time","Global_active_power","Global_reactive_power","Voltage","Global_intensity","Sub_metering_1","Sub_metering_2","Sub_metering_3")
+dat1.sub <- subset(dat1,dat1$Date=="1/2/2007" | dat1$Date =="2/2/2007")
+
+
+# Convert dates and time
+dat1.sub$Date <- as.Date(dat1.sub$Date, format = "%d/%m/%Y") 
+Time.new <- paste(as.Date(dat1.sub$Date), dat1.sub$Time) 
+dat1.sub$Time.new <- as.POSIXct(Time.new)
+
+
+# Generating Plot
+par(mfrow = c(2,2))
+with(dat1.sub, {
+    plot(dat1.sub$Global_active_power ~ dat1.sub$Time.new, type = "l", ylab = "Global Active Power", xlab = "")
+    plot(dat1.sub$Voltage ~ dat1.sub$Time.new, type = "l", ylab = "Voltage", xlab = "datetime")
+    plot(dat1.sub$Sub_metering_1 ~ dat1.sub$Time.new, type = "l", ylab = "Energy sub metering",xlab = "")
+    lines(dat1.sub$Sub_metering_2 ~ dat1.sub$Time.new, col = 'Red')
+    lines(dat1.sub$Sub_metering_3 ~ dat1.sub$Time.new, col = 'Blue')
+    legend("topright", col = c("black", "red", "blue"), lty = 1, lwd = 2, bty = "n",legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+    plot(dat1.sub$Global_reactive_power ~ dat1.sub$Time.new, type = "l", ylab = "Global_rective_power", xlab = "datetime")
+})
